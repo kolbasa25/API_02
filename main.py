@@ -3,13 +3,13 @@ import requests
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 
-API_SHORTEN = "https://clc.li/api/url/add"
-API_LIST = "https://clc.li/api/urls"
+SHORTEN_URL_ENDPOINT = "https://clc.li/api/url/add"
+GET_URLS_ENDPOINT = "https://clc.li/api/urls"
 
 
 def shorten_link(token, link):
     response = requests.post(
-        API_SHORTEN,
+        SHORTEN_URL_ENDPOINT,
         headers={"Authorization": f"Bearer {token}"},
         json={"url": link}
     )
@@ -25,7 +25,7 @@ def shorten_link(token, link):
 
 def count_clicks(token, link):
     response = requests.get(
-        API_LIST,
+        GET_URLS_ENDPOINT,
         headers={"Authorization": f"Bearer {token}"},
         params={"short": link}
     )
@@ -44,19 +44,19 @@ def is_bitlink(url):
 
 
 def main():
-    load_dotenv()
-    api_token = os.getenv("CLC_API_TOKEN")
+    try:
+        load_dotenv()
+        api_token = os.environ["CLC_API_TOKEN"]
 
-    user_input = input("Введите ссылку: ").strip()
+        user_input = input("Введите ссылку: ").strip()
 
-    if is_bitlink(user_input):
-        print("Количество кликов:", count_clicks(api_token, user_input))
-    else:
-        print("Короткая ссылка", shorten_link(api_token, user_input))
+        if is_bitlink(user_input):
+            print("Количество кликов:", count_clicks(api_token, user_input))
+        else:
+            print("Короткая ссылка", shorten_link(api_token, user_input))
+    except requests.exceptions.RequestException as error:
+        print("Ошибка:", error)
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except requests.exceptions.RequestException as error:
-        print("Ошибка:", error)
+    main()
