@@ -1,4 +1,5 @@
 import os
+import argparse
 import requests
 from urllib.parse import urlparse
 from dotenv import load_dotenv
@@ -44,11 +45,17 @@ def is_bitlink(url):
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description='Сокращает ссылку или показывает количество кликов'
+    )
+    parser.add_argument('link', help='Ссылка для обработки')
+    args = parser.parse_args()
+
     try:
         load_dotenv()
         api_token = os.environ["CLC_API_TOKEN"]
 
-        user_input = input("Введите ссылку: ").strip()
+        user_input = args.link.strip()
 
         if is_bitlink(user_input):
             print("Количество кликов:", count_clicks(api_token, user_input))
