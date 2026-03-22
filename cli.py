@@ -51,16 +51,15 @@ def main():
     parser.add_argument('link', help='Ссылка для обработки')
     args = parser.parse_args()
 
+    load_dotenv()
+    api_token = os.environ["CLC_API_TOKEN"]
+    user_input = args.link.strip()
+
     try:
-        load_dotenv()
-        api_token = os.environ["CLC_API_TOKEN"]
-
-        user_input = args.link.strip()
-
         if is_bitlink(user_input):
             print("Количество кликов:", count_clicks(api_token, user_input))
         else:
-            print("Короткая ссылка", shorten_link(api_token, user_input))
+            print("Короткая ссылка:", shorten_link(api_token, user_input))
     except requests.exceptions.RequestException as error:
         print("Ошибка:", error)
 
